@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">عالم الأطفال</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="email_icon">أيقونة البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="password_icon">أيقونة كلمة المرور</string>
+    <string name="don_t_have_an_account">ليس لديك حساب؟</string>
+    <string name="sign_up">إنشاء حساب</string>
+    <string name="username">اسم المستخدم</string>
+    <string name="user_icon">أيقونة المستخدم</string>
+    <string name="enter_your_password">أدخل كلمة المرور الخاصة بك</string>
+    <string name="verify">تحقق</string>
+    <string name="choose_your_kids_s_icon_profile">اختر صورة الملف الشخصي
+لطفلك</string>
+    <string name="enter_your_name">أدخل اسمك</string>
+    <string name="enter_your_email">أدخل بريدك الإلكتروني</string>
+    <string name="confirm_password">تأكيد كلمة المرور</string>
+    <string name="confirm_your_password">تأكيد كلمة المرور الخاصة بك</string>
+    <string name="add">إضافة</string>
+    <string name="kid_s_name">اسم الطفل</string>
+    <string name="enter_your_kid_s_name">أدخل اسم طفلك</string>
+    <string name="kid_s_age">تاريخ ميلاد الطفل</string>
+    <string name="enter_your_kid_s_age">مثال: 2002-10-26</string>
+    <string name="parent_s_settings">إعدادات الوالدين</string>
+    <string name="choose_update_or_delete">اختر تحديث أو حذف</string>
+    <string name="kid_s_settings">إعدادات الطفل</string>
+    <string name="update">تحديث</string>
+    <string name="delete">حذف</string>
+    <string name="search_history">سجل البحث</string>
+    <string name="watch_history">سجل المشاهدة</string>
+    <string name="search">بحث</string>
+    <string name="name_is_required">الاسم مطلوب</string>
+    <string name="email_is_required">البريد الإلكتروني مطلوب</string>
+    <string name="invalid_email_format">صيغة البريد الإلكتروني غير صحيحة</string>
+    <string name="password_is_required">كلمة المرور مطلوبة</string>
+    <string name="password_must_be_at_least_8_characters_long">يجب أن تتكون كلمة المرور من 6 أحرف على الأقل</string>
+    <string name="something_went_wrong_please_check_your_inputs">حدث خطأ ما. يرجى التحقق من المدخلات الخاصة بك.</string>
+    <string name="cannot_connect_to_server_check_your_network">لا يمكن الاتصال بالخادم. تحقق من الشبكة الخاصة بك.</string>
+    <string name="an_unexpected_error_occurred">حدث خطأ غير متوقع</string>
+</resources>
