@@ -1,3 +1,0 @@
-- [x] Add icon mapping to `SettingsViewModel.kt`
-- [x] Update selection logic and icon display in `SettingsScreen.kt`
-- [x] Verify selection updates icon and text fields
