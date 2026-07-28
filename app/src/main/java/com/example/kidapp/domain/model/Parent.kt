@@ -6,6 +6,15 @@ data class Parent(
     val name: String,
     val email: String
 )
+data class ParentLogin(
+    val id: Int?,
+    val name: String?,
+    val email: String
+)
+data class ParentUpdate(
+    val id: Int?,
+    val email: String
+)
 
 data class Child(
     val id: Int?,

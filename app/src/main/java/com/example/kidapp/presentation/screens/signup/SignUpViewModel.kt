@@ -77,7 +77,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onSignUpClick(values: List<String>) {
-        if(isInputValid(values)) {
+        if(!isInputValid(values)) {
             return
         }
         viewModelScope.launch {

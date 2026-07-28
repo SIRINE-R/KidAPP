@@ -8,10 +8,14 @@ import com.example.kidapp.data.remote.dto.ParentLogInRequest
 import com.example.kidapp.data.remote.dto.ParentLoginResponseDto
 import com.example.kidapp.data.remote.dto.ParentRequestDto
 import com.example.kidapp.data.remote.dto.ParentResponseDto
+import com.example.kidapp.data.remote.dto.UpdateParentReq
+import com.example.kidapp.data.remote.dto.UpdateParentRes
 import com.example.kidapp.data.remote.dto.VerifyReq
 import com.example.kidapp.data.remote.dto.VerifyRes
 import com.example.kidapp.domain.model.Child
 import com.example.kidapp.domain.model.Parent
+import com.example.kidapp.domain.model.ParentLogin
+import com.example.kidapp.domain.model.ParentUpdate
 import com.example.kidapp.domain.model.ParentVerify
 import com.example.kidapp.domain.model.repository.AuthRepository
 import io.ktor.client.HttpClient
@@ -65,7 +69,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun parentLogin(email: String, password: String): Result<Parent> {
+    override suspend fun parentLogin(email: String, password: String): Result<ParentLogin> {
        return try {
            val response = client.post("$BASE_URL/login_parent"){
                contentType(ContentType.Application.Json)
@@ -74,7 +78,7 @@ class AuthRepositoryImpl @Inject constructor(
            if(response.status.isSuccess()) {
                val response = response.body<ParentLoginResponseDto>()
                Result.success(
-                   Parent(
+                   ParentLogin(
                        id = response.id,
                        name = response.name,
                        email = response.email
@@ -90,8 +94,6 @@ class AuthRepositoryImpl @Inject constructor(
            Result.failure(e)
        }
     }
-
-
     override suspend fun verifyParent(password: String, email: String?): Result<ParentVerify> {
         return try {
             val response = client.post("$BASE_URL/verify_parent"){
@@ -230,5 +232,20 @@ class AuthRepositoryImpl @Inject constructor(
 
     }
 
-
+    override suspend fun updateParent(id: Int?, email: String, password: String): Result<ParentUpdate> {
+        return try {
+            val response = client.put("$BASE_URL/update_parent") {
+                contentType(ContentType.Application.Json)
+                setBody(UpdateParentReq(id,email, password))
+            }.body<UpdateParentRes>()
+            Result.success(
+                ParentUpdate(
+                    id = id,
+                    email = response.email
+                )
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

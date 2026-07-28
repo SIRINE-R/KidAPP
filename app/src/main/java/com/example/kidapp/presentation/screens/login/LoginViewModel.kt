@@ -42,7 +42,7 @@ class LoginViewModel @Inject constructor(
                 password = _password.value,
             )
             result.onSuccess { parent ->
-                _id.value = parent.id
+                _id.value = parent.id!!
                 _loginUIState.value = LoginUIState.Success(parent)
             }
             result.onFailure {

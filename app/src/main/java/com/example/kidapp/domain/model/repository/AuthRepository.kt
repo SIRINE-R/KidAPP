@@ -2,6 +2,8 @@ package com.example.kidapp.domain.model.repository
 import com.example.kidapp.data.remote.dto.ChildProfileResponse
 import com.example.kidapp.domain.model.Child
 import com.example.kidapp.domain.model.Parent
+import com.example.kidapp.domain.model.ParentLogin
+import com.example.kidapp.domain.model.ParentUpdate
 import com.example.kidapp.domain.model.ParentVerify
 import io.ktor.client.statement.HttpResponse
 
@@ -20,7 +22,7 @@ interface AuthRepository {
     suspend fun parentLogin(
         email: String,
         password: String
-    ): Result<Parent>
+    ): Result<ParentLogin>
 
     suspend fun addChildProfile(
         name: String,
@@ -48,6 +50,12 @@ interface AuthRepository {
         id: Int,
         name: String
     ): Result<HttpResponse>
+
+    suspend fun updateParent(
+        id: Int?,
+        email: String,
+        password: String
+    ): Result<ParentUpdate>
 
 //    suspend fun updateParent(
 //        email: String,

@@ -37,10 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kidapp.R
@@ -48,12 +48,10 @@ import com.example.kidapp.presentation.screens.components.KidButton
 import com.example.kidapp.presentation.screens.components.KidTextField
 import com.example.kidapp.presentation.screens.components.ProfileImage
 import com.example.kidapp.presentation.screens.components.SectionEditing
-import com.example.kidapp.presentation.screens.viewModels.SettingsViewModel2
 import com.example.kidapp.util.Routes
 import com.example.myapplication.kid_activity.presentation.screens.icons
 
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -61,19 +59,17 @@ fun SettingsScreen(
     email: String?, id: Int?,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val viewModel: SettingsViewModel2 = viewModel()
-    val uiState = viewModel.uiState.collectAsState()
-    val childUIState by settingsViewModel.childSettingsUIState.collectAsState()
+    val formState by settingsViewModel.formState.collectAsState()
 
     LaunchedEffect(id) {
         settingsViewModel.getChildren(id)
     }
+    LaunchedEffect(email) {
+        settingsViewModel.onEmailUpdate(email)
+    }
     val children by settingsViewModel.child.collectAsState()
-    val selectedName by settingsViewModel.selectedName.collectAsState()
-    val selectedIcon by settingsViewModel.selectedIcon.collectAsState()
-    val isChoosingIcon by settingsViewModel.isChoosingIcon.collectAsState()
-    var childID = 0
-   
+
+
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -129,37 +125,40 @@ fun SettingsScreen(
         ) {
             SectionEditing(
                 title = stringResource(R.string.parent_s_settings),
-                isUpdateSelected = uiState.value.isParentUpdating,
-                isDeleteSelected = uiState.value.isParentDeleting,
+                isUpdateSelected = formState.isParentUpdating,
+                isDeleteSelected = formState.isParentDeleting,
                 onUpdateSelected = {
-                    viewModel.updateParentUpdating(true)
-                    viewModel.updateParentDeleting(false)
+                    settingsViewModel.updateParentUpdating(true)
+                    settingsViewModel.updateParentDeleting(false)
                 },
                 onDeleteSelected = {
-                    viewModel.updateParentDeleting(true)
-                    viewModel.updateParentUpdating(false)
+                    settingsViewModel.updateParentDeleting(true)
+                    settingsViewModel.updateParentUpdating(false)
                 },
                 content = {
-                    if (uiState.value.isParentUpdating) {
+                    if (formState.isParentUpdating) {
+                            KidTextField(
+                                value = formState.emailUpdate,
+                                onValueChange = { settingsViewModel.onEmailUpdate(it) },
+                                label = stringResource(R.string.email),
+                            )
                         KidTextField(
-                            value = uiState.value.email,
-                            onValueChange = { viewModel.updateEmail(it) },
-                            label = stringResource(R.string.email),
-                        )
-                        KidTextField(
-                            value = uiState.value.password,
-                            onValueChange = { viewModel.updatePassword(it) },
+                            value = formState.passwordUpdate,
+                            onValueChange = { settingsViewModel.onPasswordUpdate(it) },
                             label = stringResource(R.string.password),
+                            visualTransformation = PasswordVisualTransformation()
                         )
                         KidButton(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                settingsViewModel.onUpdateParentClick(id = id)
+                            },
                             text = stringResource(R.string.update),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
-                    } else if (uiState.value.isParentDeleting) {
+                    } else if (formState.isParentDeleting) {
                         KidTextField(
-                            value = uiState.value.deleteEmail,
-                            onValueChange = { viewModel.updateEmailName(it) },
+                            value = formState.deleteEmail,
+                            onValueChange = { settingsViewModel.updateEmailName(it) },
                             label = stringResource(R.string.email),
                         )
                         KidButton(
@@ -185,18 +184,18 @@ fun SettingsScreen(
             )
             SectionEditing(
                 title = stringResource(R.string.kid_s_settings),
-                isUpdateSelected = uiState.value.isKidUpdating,
-                isDeleteSelected = uiState.value.isKidDeleting,
+                isUpdateSelected = formState.isKidUpdating,
+                isDeleteSelected = formState.isKidDeleting,
                 onUpdateSelected = {
-                    viewModel.updateKidUpdating(true)
-                    viewModel.updateKidDeleting(false)
+                    settingsViewModel.updateKidUpdating(true)
+                    settingsViewModel.updateKidDeleting(false)
                 },
                 onDeleteSelected = {
-                    viewModel.updateKidDeleting(true)
-                    viewModel.updateKidUpdating(false)
+                    settingsViewModel.updateKidDeleting(true)
+                    settingsViewModel.updateKidUpdating(false)
                 },
                 content = {
-                    if (uiState.value.isKidUpdating) {
+                    if (formState.isKidUpdating) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center,
@@ -205,7 +204,7 @@ fun SettingsScreen(
                                 .padding(16.dp)
                         ) {
                             ExposedDropdownMenuBox(
-                                expanded = settingsViewModel.isExpandedState.value,
+                                expanded = formState.isExpanded,
                                 onExpandedChange = { settingsViewModel.onExpandClick() },
                                 modifier = Modifier.clip(RoundedCornerShape(30.dp)
                                 )
@@ -214,16 +213,15 @@ fun SettingsScreen(
                                     modifier = Modifier
                                         .menuAnchor(),
                                     readOnly = true,
-                                    value = selectedName,
+                                    value = formState.selectedName,
                                     onValueChange = {},
                                     label = {Text(text = "Click to choose kid's name")}
                                 )
                                 ExposedDropdownMenu(
-                                    expanded = settingsViewModel.isExpandedState.value,
+                                    expanded = formState.isExpanded,
                                     onDismissRequest = { settingsViewModel.onExpandClick() }
                                 ) {
                                     children.forEach { child ->
-                                        childID = child.id
                                         DropdownMenuItem(
                                             text = { Text(child.name) },
                                             onClick = {
@@ -241,9 +239,9 @@ fun SettingsScreen(
                                 }
                             } 
                             Spacer(modifier = Modifier.weight(1f))
-                            if(!isChoosingIcon) {
+                            if(!formState.isChoosingIcon) {
                                 ProfileImage(
-                                    profileImage = if (selectedIcon != 0) selectedIcon else R.drawable.panda,
+                                    profileImage = if (formState.selectedIcon != 0) formState.selectedIcon else R.drawable.panda,
                                     onClick = {
                                         settingsViewModel.updateIsChoosingIcon(true)
                                     },
@@ -272,28 +270,28 @@ fun SettingsScreen(
                             }
                         }
                         KidTextField(
-                            value = settingsViewModel.childName.value,
+                            value = formState.childName,
                             onValueChange = { settingsViewModel.onChildNameChange(it) },
                             label = stringResource(R.string.kid_s_name),
                         )
                         KidTextField(
-                            value = settingsViewModel.childAge.value,
+                            value = formState.childAge,
                             onValueChange = { settingsViewModel.onChildAgeChange(it) },
                             label = stringResource(R.string.kid_s_age),
                         )
                         KidButton(
-                            onClick = {settingsViewModel.onUpdateClick() },
+                            onClick = {settingsViewModel.onUpdateChildClick() },
                             text = stringResource(R.string.update),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
-                    } else if (uiState.value.isKidDeleting) {
+                    } else if (formState.isKidDeleting) {
                         KidTextField(
-                            value = settingsViewModel.childDeleteName.value,
+                            value = formState.childDeleteName,
                             onValueChange = { settingsViewModel.onChildDeleteNameChange(it) },
                             label = stringResource(R.string.kid_s_name),
                         )
                         KidButton(
-                            onClick = { settingsViewModel.onDeleteClick(childID) },
+                            onClick = { settingsViewModel.onDeleteChildClick(formState.childIdUpdate) },
                             text = stringResource(R.string.delete),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
 
@@ -314,13 +312,4 @@ fun SettingsScreen(
         }
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-        SettingsScreen(
-            navController = rememberNavController(),
-            email = null,
-            id = null
-        )
 
-}
