@@ -57,12 +57,7 @@ interface AuthRepository {
         password: String
     ): Result<ParentUpdate>
 
-//    suspend fun updateParent(
-//        email: String,
-//        password: String
-//    ): Result<Parent>
-//
-//    suspend fun deleteParent(
-//        id: Int
-//    ): Result<HttpResponse>
+    suspend fun deleteParent(
+        email: String
+    ): Result<HttpResponse>
 }

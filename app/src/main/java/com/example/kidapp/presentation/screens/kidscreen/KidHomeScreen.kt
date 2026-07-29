@@ -30,7 +30,7 @@ fun KidHomeScreen(
             onValueChange = {  },
             painter = kidHomeViewModel.getDrawableRes(iconProfile),
             onClick = {
-                navController.navigate(Routes.SEARCH.name)
+                navController.navigate(Routes.SEARCH.name+"/$iconProfile")
             },
             isReadOnly = true,
             enabled = false,

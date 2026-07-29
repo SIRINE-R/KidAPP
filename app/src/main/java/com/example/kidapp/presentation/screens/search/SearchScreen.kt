@@ -12,15 +12,18 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kidapp.presentation.screens.components.SearchBar
+import com.example.kidapp.presentation.screens.search.SearchViewModel
 
 @Composable
 fun SearchScreen(
     navController: NavHostController,
+    iconProfile: String?,
+    searchViewModel: SearchViewModel = viewModel()
 ) {
-
 
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -36,7 +39,8 @@ fun SearchScreen(
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search
-            )
+            ),
+            painter = searchViewModel.getDrawableRes(iconProfile),
         )
 
                 LazyVerticalGrid(
@@ -48,8 +52,3 @@ fun SearchScreen(
             }
         }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewSearchScreen() {
-    SearchScreen(rememberNavController())
-}

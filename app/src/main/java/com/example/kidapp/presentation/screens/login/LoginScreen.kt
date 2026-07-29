@@ -32,7 +32,6 @@ import com.example.kidapp.presentation.screens.components.KidTextField
 import com.example.kidapp.presentation.screens.login.LoginUIState
 import com.example.kidapp.presentation.screens.login.LoginViewModel
 import com.example.kidapp.util.Routes
-import com.example.myapplication.kid_activity.presentation.viewModels.AuthViewModel
 
 @Composable
 fun LoginScreen(

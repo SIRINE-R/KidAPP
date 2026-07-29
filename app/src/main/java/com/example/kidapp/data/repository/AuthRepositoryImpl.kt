@@ -248,4 +248,19 @@ class AuthRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun deleteParent(email: String): Result<HttpResponse> {
+        return try {
+            val response = client.delete("$BASE_URL/delete_parent/$email"){
+                url {
+                    parameters.append("email", email)
+                }
+            }
+            Result.success(
+                response
+            )
+            } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

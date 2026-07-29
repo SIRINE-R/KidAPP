@@ -66,6 +66,7 @@ fun SettingsScreen(
     }
     LaunchedEffect(email) {
         settingsViewModel.onEmailUpdate(email)
+        settingsViewModel.deleteParentEmail(email)
     }
     val children by settingsViewModel.child.collectAsState()
 
@@ -156,13 +157,15 @@ fun SettingsScreen(
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     } else if (formState.isParentDeleting) {
-                        KidTextField(
-                            value = formState.deleteEmail,
-                            onValueChange = { settingsViewModel.updateEmailName(it) },
-                            label = stringResource(R.string.email),
-                        )
+                        formState.deleteEmail?.let { it ->
+                            KidTextField(
+                                value = it,
+                                onValueChange = { settingsViewModel.deleteParentEmail(it) },
+                                label = stringResource(R.string.email),
+                            )
+                        }
                         KidButton(
-                            onClick = { /*TODO*/ },
+                            onClick = { settingsViewModel.onDeleteParentClick(formState.deleteEmail!!) },
                             text = stringResource(R.string.delete),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
 

@@ -8,6 +8,7 @@ import com.example.kidapp.R
 import com.example.kidapp.data.remote.dto.ChildProfileResponse
 import com.example.kidapp.domain.model.use_case.ChildrenUseCase
 import com.example.kidapp.domain.model.use_case.DeleteChildUseCase
+import com.example.kidapp.domain.model.use_case.DeleteParentUseCase
 import com.example.kidapp.domain.model.use_case.UpdateChildUseCase
 import com.example.kidapp.domain.model.use_case.UpdateParentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,8 @@ class SettingsViewModel @Inject constructor(
     private val updateChildUseCase: UpdateChildUseCase,
     private val deleteChildUseCase: DeleteChildUseCase,
     private val getChildrenUseCase: ChildrenUseCase,
-    private val updateParentUseCase: UpdateParentUseCase
+    private val updateParentUseCase: UpdateParentUseCase,
+    private val deleteParentUseCase: DeleteParentUseCase
 ): ViewModel() {
 
     data class SettingsFormState(
@@ -32,7 +34,7 @@ class SettingsViewModel @Inject constructor(
         val isKidDeleting: Boolean = false,
         val emailUpdate: String = "",
         val passwordUpdate: String = "",
-        val deleteEmail: String = "",
+        val deleteEmail: String? = "",
         val childName: String = "",
         val childAge: String = "",
         val childDeleteName: String = "",
@@ -94,7 +96,7 @@ class SettingsViewModel @Inject constructor(
         _formState.value = _formState.value.copy(isKidDeleting = isDeleting)
     }
 
-    fun updateEmailName(deleteEmail: String) {
+    fun deleteParentEmail(deleteEmail: String?) {
         _formState.value = _formState.value.copy(deleteEmail = deleteEmail)
     }
 
@@ -184,6 +186,21 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+    fun onDeleteParentClick(email: String) {
+        viewModelScope.launch {
+            _settingsUIState.value = SettingsUIState.Loading
+            val result = deleteParentUseCase(
+               email = email
+            )
+            result.onSuccess {
+                _settingsUIState.value = SettingsUIState.Success(child = null, parent = null)
+                clearParentDelete()
+            }
+            result.onFailure {
+                _settingsUIState.value = SettingsUIState.Error(it.message ?: "Unknown error")
+            }
+        }
+    }
 
     fun getChildren(id: Int?) {
         viewModelScope.launch {
@@ -217,6 +234,12 @@ class SettingsViewModel @Inject constructor(
             emailUpdate = "",
             passwordUpdate = "",
             isParentUpdating = false
+        )
+    }
+    fun clearParentDelete() {
+        _formState.value = _formState.value.copy(
+            deleteEmail = "",
+            isParentDeleting = false
         )
     }
 }

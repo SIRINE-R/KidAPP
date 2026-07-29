@@ -120,8 +120,12 @@ class MainActivity : ComponentActivity() {
                                 iconProfile = iconProfile
                             )
                         }
-                        composable(Routes.SEARCH.name) {
-                            SearchScreen(navigation)
+                        composable(Routes.SEARCH.name + "/{icon_profile}",
+                            arguments = listOf(
+                                navArgument("icon_profile") { type = NavType.StringType }
+                            )) {
+                            val iconProfile = it.arguments?.getString("icon_profile")
+                            SearchScreen(navigation, iconProfile = iconProfile )
                         }
 
                     }
