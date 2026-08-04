@@ -12,6 +12,9 @@ import com.example.kidapp.data.remote.dto.UpdateParentReq
 import com.example.kidapp.data.remote.dto.UpdateParentRes
 import com.example.kidapp.data.remote.dto.VerifyReq
 import com.example.kidapp.data.remote.dto.VerifyRes
+import com.example.kidapp.data.remote.dto.VideoListResponse
+import com.example.kidapp.data.remote.dto.VideoRequest
+import com.example.kidapp.data.remote.dto.VideoResponse
 import com.example.kidapp.domain.model.Child
 import com.example.kidapp.domain.model.Parent
 import com.example.kidapp.domain.model.ParentLogin
@@ -248,7 +251,6 @@ class AuthRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
-
     override suspend fun deleteParent(email: String): Result<HttpResponse> {
         return try {
             val response = client.delete("$BASE_URL/delete_parent/$email"){
@@ -260,6 +262,20 @@ class AuthRepositoryImpl @Inject constructor(
                 response
             )
             } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getVideos(query: String): Result<List<VideoResponse>> {
+        return try {
+            val response = client.post("$BASE_URL/get_videos") {
+                contentType(ContentType.Application.Json)
+                setBody(VideoRequest(query = query))
+            }
+            val videoListResponse: VideoListResponse = response.body()
+            Result.success(videoListResponse.videos)
+        }
+        catch(e: Exception) {
             Result.failure(e)
         }
     }

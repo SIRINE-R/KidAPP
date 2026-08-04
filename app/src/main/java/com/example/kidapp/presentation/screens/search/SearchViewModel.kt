@@ -1,11 +1,21 @@
 package com.example.kidapp.presentation.screens.search
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.kidapp.R
+import com.example.kidapp.data.remote.dto.VideoResponse
+import com.example.kidapp.domain.model.Video
+import com.example.kidapp.domain.model.use_case.GetVideosUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel: ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val getVideosUseCase: GetVideosUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow<SerachScreenUIState>(SerachScreenUIState.Idle)
     val uiState = _uiState.asStateFlow()
 
@@ -19,11 +29,49 @@ class SearchViewModel: ViewModel() {
         R.drawable.panda to "panda"
     )
 
+
     private val keyToDrawableMap = drawableToKeyMap.entries.associate { it.value to it.key }
 
+    private val _queryText = MutableStateFlow("")
+    val queryText = _queryText.asStateFlow()
+
+    private val _video = MutableStateFlow<List<Video>>(emptyList())
+    val video = _video.asStateFlow()
+
+
+    fun onQueryChanged(query: String) {
+        _queryText.value = query
+    }
+
+    fun videoMetaData(video: List<Video>) {
+        _video.value = video
+    }
 
     fun getDrawableRes(iconKey: String?): Int {
         return keyToDrawableMap[iconKey] ?: R.drawable.panda
     }
 
+    fun getVideos() {
+        viewModelScope.launch {
+            _uiState.value = SerachScreenUIState.Loading
+            getVideosUseCase(query = _queryText.value)
+                .onSuccess { responseList ->
+                    val mapped = responseList.map {
+                        Video(
+                            video_id = it.video_id,
+                            title = it.title,
+                            description = it.description,
+                            thumbnail_url = it.thumbnail_url
+                        )
+                    }
+                    videoMetaData(mapped)
+                    _uiState.value = SerachScreenUIState.Success(mapped)
+                }
+                .onFailure {
+                    _uiState.value = SerachScreenUIState.Error(it.message ?: "Unknown error")
+                    }
+
+                }
+        }
 }
+

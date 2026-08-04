@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">عالم الأطفال</string>
     <string name="login">تسجيل الدخول</string>
+    <string name="have_account">هل لديك حساب بالفعل ؟</string>
     <string name="email">البريد الإلكتروني</string>
     <string name="email_icon">أيقونة البريد الإلكتروني</string>
     <string name="password">كلمة المرور</string>

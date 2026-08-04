@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -132,6 +133,14 @@ fun SignUpScreen(
             isError = signUpViewModel.emailError.value != null,
             visualTransformation = PasswordVisualTransformation()
         )
+        TextButton(onClick = {
+            navigation.navigate(Routes.LOGIN.name)
+        }) {
+            Text(
+                text = stringResource(R.string.have_account),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
         signUpViewModel.passwordError.value?.let{
             errorMessage ->
             Text(text = errorMessage, color = Color.Red, style = MaterialTheme.typography.bodySmall)

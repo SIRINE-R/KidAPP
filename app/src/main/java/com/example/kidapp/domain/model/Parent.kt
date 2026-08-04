@@ -33,3 +33,9 @@ data class ChildProfile(
     val name: String,
     val iconProfile: String?
 )
+data class Video(
+    val video_id: String,
+    val title: String,
+    val description: String,
+    val thumbnail_url: String
+)

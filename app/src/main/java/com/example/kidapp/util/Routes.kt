@@ -12,5 +12,5 @@ enum class Routes {
     ACTIVITY,
     KIDHOME ,
     SEARCH,
-    PLAYSCREEN
+    PLAYERSCREEN
 }

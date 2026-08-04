@@ -1,5 +1,6 @@
 package com.example.kidapp.domain.model.repository
 import com.example.kidapp.data.remote.dto.ChildProfileResponse
+import com.example.kidapp.data.remote.dto.VideoResponse
 import com.example.kidapp.domain.model.Child
 import com.example.kidapp.domain.model.Parent
 import com.example.kidapp.domain.model.ParentLogin
@@ -60,4 +61,8 @@ interface AuthRepository {
     suspend fun deleteParent(
         email: String
     ): Result<HttpResponse>
+
+    suspend fun getVideos(
+        query: String
+    ): Result<List<VideoResponse>>
 }

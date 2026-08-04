@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Kids World</string>
     <string name="login">Login</string>
+    <string name="have_account">Already have an account?</string>
     <string name="email">Email</string>
     <string name="email_icon">Email Icon</string>
     <string name="password">Password</string>

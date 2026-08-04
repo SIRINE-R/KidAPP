@@ -25,6 +25,7 @@ import com.example.myapplication.kid_activity.presentation.screens.LoginScreen
 import com.example.myapplication.kid_activity.presentation.screens.ProfilesScreen
 import com.example.myapplication.kid_activity.presentation.screens.SearchScreen
 import com.example.kidapp.presentation.screens.settings.SettingsScreen
+import com.example.kidapp.presentation.screens.videoPlayer.VideoPlayerScreen
 import com.example.myapplication.kid_activity.presentation.screens.VerificationScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -126,6 +127,15 @@ class MainActivity : ComponentActivity() {
                             )) {
                             val iconProfile = it.arguments?.getString("icon_profile")
                             SearchScreen(navigation, iconProfile = iconProfile )
+                        }
+                        composable(Routes.PLAYERSCREEN.name + "/{video_id}" + "/{query}",
+                            arguments = listOf(
+                                navArgument("video_id") { type = NavType.StringType },
+                                navArgument("query") { type = NavType.StringType }
+                            )) {
+                            val videoID = it.arguments?.getString("video_id")
+                            val query = it.arguments?.getString("query")
+                            VideoPlayerScreen(videoID = videoID, query = query, navController = navigation)
                         }
 
                     }

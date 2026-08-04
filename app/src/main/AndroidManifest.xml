@@ -15,6 +15,7 @@
 
         <activity
             android:name=".presentation.screens.main.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="true"
             android:theme="@style/Theme.KidApp">
             <intent-filter>

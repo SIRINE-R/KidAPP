@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.kidapp.R
 
 
@@ -224,7 +225,7 @@ fun KidWatchedVideoCard(
     modifier: Modifier = Modifier,
     title: String = "",
     description: String = "",
-    thumbnail: Int = R.drawable.panda,
+    thumbnail: Any? = R.drawable.panda,
     onClick: () -> Unit = {}
 ) {
     Row(
@@ -242,11 +243,12 @@ fun KidWatchedVideoCard(
                 .clickable(onClick = onClick)
                 .clip(RoundedCornerShape(25.dp)) ,
         ) {
-            Image(
-                painter = painterResource(thumbnail),
-                contentDescription = null ,
-                modifier = Modifier
-                    .fillMaxSize()
+            AsyncImage(
+                model = thumbnail,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.panda)
             )
         }
         Spacer(modifier = Modifier.padding(horizontal = 16.dp))
@@ -292,11 +294,12 @@ fun VideoCard(
                 .height(150.dp)
                 .clip(RoundedCornerShape(25.dp)),
         ) {
-            Image(
-                painter = painterResource(R.drawable.panda),
-                contentDescription = null ,
-                modifier = Modifier
-                    .fillMaxSize()
+            AsyncImage(
+                model = thumbnail,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.panda)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
