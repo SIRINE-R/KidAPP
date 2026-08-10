@@ -13,7 +13,6 @@ data class VideoResponse(
     val description: String,
     val thumbnail_url: String
 )
-
 @Serializable
 data class VideoListResponse(
     val videos: List<VideoResponse>

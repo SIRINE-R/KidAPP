@@ -2,6 +2,7 @@ package com.example.kidapp.presentation.screens.videoPlayer
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.view.View
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,16 +50,20 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFram
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import java.time.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerScreen(
     navController: NavController,
     videoID: String?,
     query: String?,
+    childId: Int?,
     viewModel: VideoPlayerViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -144,6 +149,16 @@ fun VideoPlayerScreen(
         }
     }
 
+    LaunchedEffect(videoID, childId) {
+        if (videoID != null && childId != null) {
+            viewModel.addWatchedVideo(
+                childId = childId,
+                videoId = videoID,
+                watchedAt = LocalDateTime.now()
+            )
+        }
+    }
+
     LaunchedEffect(query) {
         query?.let { viewModel.getRelatedVideos(it) }
     }
@@ -204,7 +219,7 @@ fun VideoPlayerScreen(
                             description = video.description,
                             thumbnail = video.thumbnail_url,
                             onClick = {
-                                navController.navigate(Routes.PLAYERSCREEN.name + "/${video.video_id}/${query}")
+                                navController.navigate(Routes.PLAYERSCREEN.name + "/${video.video_id}/${query}/${childId}")
                             }
                         )
                     }

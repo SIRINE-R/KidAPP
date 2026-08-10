@@ -1,5 +1,7 @@
 package com.example.kidapp.domain.model
 
+import java.time.LocalDateTime
+
 
 data class Parent(
     val id: Int ,
@@ -38,4 +40,10 @@ data class Video(
     val title: String,
     val description: String,
     val thumbnail_url: String
+)
+
+data class SearchTexts(
+    val id: Int,
+    val query: String,
+    val searchedAt: LocalDateTime
 )

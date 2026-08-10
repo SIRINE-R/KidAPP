@@ -1,4 +1,4 @@
-package com.example.myapplication.kid_activity.presentation.screens
+package com.example.kidapp.presentation.screens.profiles
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.kidapp.R
 import com.example.kidapp.presentation.screens.components.ProfileImage
-import com.example.kidapp.presentation.screens.profiles.ProfilesViewModel
 import com.example.kidapp.util.Routes
 
 @Composable
@@ -31,7 +30,6 @@ fun ProfilesScreen(
     id: Int?,
     profilesViewModel: ProfilesViewModel = hiltViewModel()
 ) {
-    val profilesUiState by profilesViewModel.childrenUIState.collectAsState()
     val children by profilesViewModel.children.collectAsState()
     val parent by profilesViewModel.parent.collectAsState()
 
@@ -64,7 +62,9 @@ fun ProfilesScreen(
                     name = child.name,
                     onClick = {
                         try {
-                            navigation.navigate(Routes.KIDHOME.name+"/${child.iconProfile}")
+                            navigation.navigate(
+                                Routes.KIDHOME.name+
+                                        "/${child.iconProfile}" + "/${child.id}")
                         } catch (e: Exception) {
                             Log.e("NavigationCrash", "Failed to navigate to KidHomeScreen", e)
                         }

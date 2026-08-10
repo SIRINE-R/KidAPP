@@ -1,10 +1,12 @@
 package com.example.kidapp.presentation.screens.main
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,12 +20,12 @@ import com.example.kidapp.presentation.screens.signup.SignUpScreen
 import com.example.kidapp.ui.theme.KidAppTheme
 import com.example.kidapp.util.Routes
 import com.example.myapplication.kid_activity.presentation.screens.AddProfileScreen
-import com.example.myapplication.kid_activity.presentation.screens.KidActivityScreen
-import com.example.myapplication.kid_activity.presentation.screens.KidHomeScreen
+import com.example.kidapp.presentation.screens.kidactivity.KidActivityScreen
+import com.example.kidapp.presentation.screens.kidscreen.KidHomeScreen
 import com.example.myapplication.kid_activity.presentation.screens.KidSplashScreen
 import com.example.myapplication.kid_activity.presentation.screens.LoginScreen
-import com.example.myapplication.kid_activity.presentation.screens.ProfilesScreen
-import com.example.myapplication.kid_activity.presentation.screens.SearchScreen
+import com.example.kidapp.presentation.screens.profiles.ProfilesScreen
+import com.example.kidapp.presentation.screens.search.SearchScreen
 import com.example.kidapp.presentation.screens.settings.SettingsScreen
 import com.example.kidapp.presentation.screens.videoPlayer.VideoPlayerScreen
 import com.example.myapplication.kid_activity.presentation.screens.VerificationScreen
@@ -31,6 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -111,31 +114,38 @@ class MainActivity : ComponentActivity() {
                             val parentId = it.arguments?.getInt("parent_id")
                             KidActivityScreen(navigation, email = email, id = parentId)
                         }
-                        composable(Routes.KIDHOME.name + "/{icon_profile}" ,
+                        composable(Routes.KIDHOME.name + "/{icon_profile}/{child_id}" ,
                             arguments = listOf(
-                                navArgument("icon_profile") { type = NavType.StringType }
+                                navArgument("icon_profile") { type = NavType.StringType },
+                                navArgument("child_id") { type = NavType.IntType }
                             )) {
                             val iconProfile = it.arguments?.getString("icon_profile")
+                            val childId = it.arguments?.getInt("child_id")
                             KidHomeScreen(
                                 navController = navigation,
-                                iconProfile = iconProfile
+                                iconProfile = iconProfile,
+                                childId = childId
                             )
                         }
-                        composable(Routes.SEARCH.name + "/{icon_profile}",
+                        composable(Routes.SEARCH.name + "/{icon_profile}/{child_id}",
                             arguments = listOf(
-                                navArgument("icon_profile") { type = NavType.StringType }
+                                navArgument("icon_profile") { type = NavType.StringType },
+                                navArgument("child_id") { type = NavType.IntType }
                             )) {
                             val iconProfile = it.arguments?.getString("icon_profile")
-                            SearchScreen(navigation, iconProfile = iconProfile )
+                            val childId = it.arguments?.getInt("child_id")
+                            SearchScreen(navigation, iconProfile = iconProfile, childId = childId )
                         }
-                        composable(Routes.PLAYERSCREEN.name + "/{video_id}" + "/{query}",
+                        composable(Routes.PLAYERSCREEN.name + "/{video_id}" + "/{query}" + "/{child_id}",
                             arguments = listOf(
                                 navArgument("video_id") { type = NavType.StringType },
-                                navArgument("query") { type = NavType.StringType }
+                                navArgument("query") { type = NavType.StringType },
+                                navArgument("child_id") { type = NavType.IntType }
                             )) {
                             val videoID = it.arguments?.getString("video_id")
                             val query = it.arguments?.getString("query")
-                            VideoPlayerScreen(videoID = videoID, query = query, navController = navigation)
+                            val childId = it.arguments?.getInt("child_id")
+                            VideoPlayerScreen(videoID = videoID, query = query, childId = childId, navController = navigation)
                         }
 
                     }

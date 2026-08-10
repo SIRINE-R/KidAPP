@@ -1,4 +1,4 @@
-package com.example.myapplication.kid_activity.presentation.screens
+package com.example.kidapp.presentation.screens.search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,15 +22,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.kidapp.presentation.screens.components.SearchBar
 import com.example.kidapp.presentation.screens.components.VideoCard
-import com.example.kidapp.presentation.screens.search.SearchViewModel
-import com.example.kidapp.presentation.screens.search.SerachScreenUIState
 import androidx.compose.material3.CircularProgressIndicator
 import com.example.kidapp.util.Routes
+import java.time.LocalDateTime
 
 @Composable
 fun SearchScreen(
     navController: NavHostController,
     iconProfile: String?,
+    childId: Int?,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     val queryText by searchViewModel.queryText.collectAsState()
@@ -48,7 +48,14 @@ fun SearchScreen(
             onValueChange = { searchViewModel.onQueryChanged(it) },
             onSearch = {
                 keyboardController?.hide()
-                searchViewModel.getVideos()
+                childId?.let {
+                    searchViewModel.performSearch(
+                        id = it,
+                        query = queryText,
+                        searchedAt = LocalDateTime.now()
+                    )
+                }
+
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search
@@ -81,7 +88,9 @@ fun SearchScreen(
                              description = video.description,
                              thumbnail = video.thumbnail_url,
                              onClick = {
-                                 navController.navigate(Routes.PLAYERSCREEN.name + "/${video.video_id}/${queryText}")
+                                 navController.navigate(
+                                     Routes.PLAYERSCREEN.name +
+                                             "/${video.video_id}/${queryText}/${childId}")
                              }
                          )
                      }

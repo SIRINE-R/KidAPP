@@ -8,6 +8,7 @@ import com.example.kidapp.data.remote.dto.ParentLogInRequest
 import com.example.kidapp.data.remote.dto.ParentLoginResponseDto
 import com.example.kidapp.data.remote.dto.ParentRequestDto
 import com.example.kidapp.data.remote.dto.ParentResponseDto
+import com.example.kidapp.data.remote.dto.SearchTextsReq
 import com.example.kidapp.data.remote.dto.UpdateParentReq
 import com.example.kidapp.data.remote.dto.UpdateParentRes
 import com.example.kidapp.data.remote.dto.VerifyReq
@@ -15,6 +16,8 @@ import com.example.kidapp.data.remote.dto.VerifyRes
 import com.example.kidapp.data.remote.dto.VideoListResponse
 import com.example.kidapp.data.remote.dto.VideoRequest
 import com.example.kidapp.data.remote.dto.VideoResponse
+import com.example.kidapp.data.remote.dto.WatchedVideoReq
+import com.example.kidapp.data.remote.dto.WatchedVideoRes
 import com.example.kidapp.domain.model.Child
 import com.example.kidapp.domain.model.Parent
 import com.example.kidapp.domain.model.ParentLogin
@@ -34,6 +37,7 @@ import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.put
 import io.ktor.client.statement.HttpResponse
+import java.time.LocalDateTime
 
 class AuthRepositoryImpl @Inject constructor(
     private val client: HttpClient
@@ -68,7 +72,7 @@ class AuthRepositoryImpl @Inject constructor(
                 Result.failure(Exception(errorMessage))
             }
         } catch (e: Exception) {
-            Result.failure(Exception("Connection failed. Check your server status."))
+            Result.failure(e)
         }
     }
 
@@ -279,4 +283,66 @@ class AuthRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+    override suspend fun addWatchedVideos(
+        childId: Int,
+        videoId: String,
+        watchedAt: LocalDateTime
+    ): Result<WatchedVideoRes> {
+        return try {
+            val response = client.post("$BASE_URL/add_watched_video") {
+                contentType(ContentType.Application.Json)
+                setBody(WatchedVideoReq(childId, videoId, watchedAt))
+            }
+            Result.success(response.body())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    override suspend fun getWatchedVideos(childId: Int, name: String): Result<List<VideoResponse>> {
+        return try {
+            val response = client.get("$BASE_URL/get_watched_videos/$childId/$name") {
+                contentType(ContentType.Application.Json)
+            }
+            if (response.status.isSuccess()) {
+                Result.success(response.body())
+            } else {
+                Result.failure(Exception("Failed to fetch watched videos: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    override suspend fun addSearchText(
+        id: Int,
+        query: String,
+        searchedAt: LocalDateTime
+    ): Result<HttpResponse> {
+        return try {
+            val response = client.post("$BASE_URL/add_search_text") {
+                contentType(ContentType.Application.Json)
+                setBody(SearchTextsReq(id, query, searchedAt))
+            }
+            Result.success(response)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getSearchTexts(childId: Int, name: String): Result<List<SearchTextsReq>> {
+        return try {
+            val response = client.get("$BASE_URL/get_search_texts/$childId/$name") {
+                contentType(ContentType.Application.Json)
+            }
+            if (response.status.isSuccess()) {
+                Result.success(response.body())
+            } else {
+                Result.failure(Exception("Failed to fetch search texts: ${response.status}"))
+            }
+        } catch(e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }
+

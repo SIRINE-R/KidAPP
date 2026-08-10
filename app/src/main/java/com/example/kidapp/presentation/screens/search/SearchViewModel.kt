@@ -1,20 +1,23 @@
 package com.example.kidapp.presentation.screens.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kidapp.R
-import com.example.kidapp.data.remote.dto.VideoResponse
 import com.example.kidapp.domain.model.Video
+import com.example.kidapp.domain.model.use_case.AddSearchedTexts
 import com.example.kidapp.domain.model.use_case.GetVideosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getVideosUseCase: GetVideosUseCase
+    private val getVideosUseCase: GetVideosUseCase,
+    private val addSearchedTexts: AddSearchedTexts
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<SerachScreenUIState>(SerachScreenUIState.Idle)
     val uiState = _uiState.asStateFlow()
@@ -51,10 +54,14 @@ class SearchViewModel @Inject constructor(
         return keyToDrawableMap[iconKey] ?: R.drawable.panda
     }
 
-    fun getVideos() {
+    fun performSearch(id: Int, query: String, searchedAt: LocalDateTime) {
         viewModelScope.launch {
             _uiState.value = SerachScreenUIState.Loading
-            getVideosUseCase(query = _queryText.value)
+
+            addSearchedTexts(id, query, searchedAt)
+                .onFailure { Log.e("SearchHistory", "Failed to save history: ${it.message}") }
+
+            getVideosUseCase(query = query)
                 .onSuccess { responseList ->
                     val mapped = responseList.map {
                         Video(
@@ -69,9 +76,9 @@ class SearchViewModel @Inject constructor(
                 }
                 .onFailure {
                     _uiState.value = SerachScreenUIState.Error(it.message ?: "Unknown error")
-                    }
-
                 }
         }
+    }
+
 }
 

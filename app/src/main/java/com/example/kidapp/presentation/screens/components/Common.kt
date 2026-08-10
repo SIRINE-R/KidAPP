@@ -225,7 +225,7 @@ fun KidWatchedVideoCard(
     modifier: Modifier = Modifier,
     title: String = "",
     description: String = "",
-    thumbnail: Any? = R.drawable.panda,
+    thumbnail: String = "",
     onClick: () -> Unit = {}
 ) {
     Row(
@@ -236,11 +236,11 @@ fun KidWatchedVideoCard(
             .padding(16.dp)
             .clip(RoundedCornerShape(25.dp))
             .background(MaterialTheme.colorScheme.primaryContainer)
+            .clickable(onClick = onClick)
     ) {
         Card(
             modifier = modifier
                 .size(height = 100.dp, width = 100.dp)
-                .clickable(onClick = onClick)
                 .clip(RoundedCornerShape(25.dp)) ,
         ) {
             AsyncImage(

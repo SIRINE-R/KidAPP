@@ -1,12 +1,15 @@
 package com.example.kidapp.domain.model.repository
 import com.example.kidapp.data.remote.dto.ChildProfileResponse
+import com.example.kidapp.data.remote.dto.SearchTextsReq
 import com.example.kidapp.data.remote.dto.VideoResponse
+import com.example.kidapp.data.remote.dto.WatchedVideoRes
 import com.example.kidapp.domain.model.Child
 import com.example.kidapp.domain.model.Parent
 import com.example.kidapp.domain.model.ParentLogin
 import com.example.kidapp.domain.model.ParentUpdate
 import com.example.kidapp.domain.model.ParentVerify
 import io.ktor.client.statement.HttpResponse
+import java.time.LocalDateTime
 
 interface AuthRepository {
     suspend fun parentSignUp(
@@ -65,4 +68,27 @@ interface AuthRepository {
     suspend fun getVideos(
         query: String
     ): Result<List<VideoResponse>>
+
+    suspend fun addWatchedVideos(
+        childId: Int,
+        videoId: String,
+        watchedAt: LocalDateTime
+    ): Result<WatchedVideoRes>
+
+    suspend fun getWatchedVideos(
+        childId: Int,
+        name: String
+    ): Result<List<VideoResponse>>
+
+    suspend fun addSearchText(
+        id: Int,
+        query: String,
+        searchedAt: LocalDateTime
+    ): Result<HttpResponse>
+
+    suspend fun getSearchTexts(
+        childId: Int,
+        name: String
+    ): Result<List<SearchTextsReq>>
+
 }
