@@ -1,6 +1,5 @@
 package com.example.kidapp.presentation.screens.settings
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +20,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,18 +38,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.kidapp.R
 import com.example.kidapp.presentation.screens.components.KidButton
 import com.example.kidapp.presentation.screens.components.KidTextField
 import com.example.kidapp.presentation.screens.components.ProfileImage
 import com.example.kidapp.presentation.screens.components.SectionEditing
 import com.example.kidapp.util.Routes
-import com.example.myapplication.kid_activity.presentation.screens.icons
+import com.example.kidapp.presentation.screens.addprofile.icons
 
 
 @OptIn(ExperimentalMaterial3Api::class)

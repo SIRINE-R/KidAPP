@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Face
@@ -58,6 +60,10 @@ fun KidActivityScreen(
     val selectedChildId by viewModel.selectedChildId.collectAsState()
     val videos by viewModel.video.collectAsState()
     val searchTexts by viewModel.searchedTexts.collectAsState()
+
+    val scrollState1 = rememberScrollState()
+    val scrollState2 = rememberScrollState()
+
 
     Scaffold(
         bottomBar = {
@@ -145,6 +151,7 @@ fun KidActivityScreen(
                     }
                 }
             }
+
             item {
                 ActivityContainer(
                     title = stringResource(R.string.watch_history),
@@ -154,7 +161,9 @@ fun KidActivityScreen(
                                 Text(text = "No history found", color = MaterialTheme.colorScheme.primary)
                             }
                         } else {
-                            Column {
+                            Column(
+                                modifier = Modifier.verticalScroll(state = scrollState1)
+                            ) {
                                 videos.forEach {
                                     KidWatchedVideoCard(
                                         title = it.title,
@@ -188,7 +197,9 @@ fun KidActivityScreen(
                             }
                         }
                             else {
-                                Column {
+                                Column(
+                                    modifier = Modifier.verticalScroll(state = scrollState2)
+                                ) {
                                     searchTexts.forEach { search ->
                                         SearchContent(
                                             text = search.query,

@@ -57,6 +57,13 @@ fun LoginScreen(
             text = stringResource(R.string.login),
             style = MaterialTheme.typography.headlineLarge
         )
+        if (loginUiState is LoginUIState.Error) {
+            Text(
+                text = (loginUiState as LoginUIState.Error).message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
         KidTextField(
             value = loginViewModel.email.value,
             onValueChange = { loginViewModel.onEmailChange(it) },

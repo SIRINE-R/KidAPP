@@ -64,8 +64,8 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             } else {
                 val errorBody = httpResponse.body<String>()
-                val errorMessage = if (errorBody.contains("\"detail\":")) {
-                    errorBody.substringAfter("\"detail\":\"").substringBefore("\"")
+                val errorMessage = if (errorBody.contains("\"detail\"")) {
+                    errorBody.substringAfter("\"detail\"").substringAfter("\"").substringBefore("\"")
                 } else {
                     "Sign up failed. Please try again."
                 }
@@ -77,53 +77,61 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun parentLogin(email: String, password: String): Result<ParentLogin> {
-       return try {
-           val response = client.post("$BASE_URL/login_parent"){
-               contentType(ContentType.Application.Json)
-               setBody(ParentLogInRequest(email, password))
-           }
-           if(response.status.isSuccess()) {
-               val response = response.body<ParentLoginResponseDto>()
-               Result.success(
-                   ParentLogin(
-                       id = response.id,
-                       name = response.name,
-                       email = response.email
-                   )
-               )
-           } else {
-               Result.failure(
-                   Exception("Login failed. Please try again.")
-               )
-           }
+        return try {
+            val response = client.post("$BASE_URL/login_parent") {
+                contentType(ContentType.Application.Json)
+                setBody(ParentLogInRequest(email, password))
+            }
+            if (response.status.isSuccess()) {
+                val loginRes = response.body<ParentLoginResponseDto>()
+                Result.success(
+                    ParentLogin(
+                        id = loginRes.id,
+                        name = loginRes.name,
+                        email = loginRes.email
+                    )
+                )
+            } else {
+                val errorBody = response.body<String>()
+                val errorMessage = if (errorBody.contains("\"detail\"")) {
+                    errorBody.substringAfter("\"detail\"").substringAfter("\"").substringBefore("\"")
+                } else {
+                    "Login failed. Please try again."
+                }
+                Result.failure(Exception(errorMessage))
+            }
 
-       } catch(e: Exception){
-           Result.failure(e)
-       }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
     override suspend fun verifyParent(password: String, email: String?): Result<ParentVerify> {
         return try {
-            val response = client.post("$BASE_URL/verify_parent"){
-            contentType(ContentType.Application.Json)
-            setBody(VerifyReq(password, email))
-        }
+            val response = client.post("$BASE_URL/verify_parent") {
+                contentType(ContentType.Application.Json)
+                setBody(VerifyReq(password, email))
+            }
 
-        if(response.status.isSuccess()) {
-            val response = response.body<VerifyRes>()
-            Result.success(
-                ParentVerify(
-                    id = response.id,
-                    email = response.email
+            if (response.status.isSuccess()) {
+                val verifyRes = response.body<VerifyRes>()
+                Result.success(
+                    ParentVerify(
+                        id = verifyRes.id,
+                        email = verifyRes.email
+                    )
                 )
-            )
-        } else {
-            Result.failure(
-                Exception("Login failed. Please try again.")
-            )
+            } else {
+                val errorBody = response.body<String>()
+                val errorMessage = if (errorBody.contains("\"detail\"")) {
+                    errorBody.substringAfter("\"detail\"").substringAfter("\"").substringBefore("\"")
+                } else {
+                    "Verification failed. Please try again."
+                }
+                Result.failure(Exception(errorMessage))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
     }
 
     override suspend fun addChildProfile(
@@ -138,21 +146,25 @@ class AuthRepositoryImpl @Inject constructor(
                 contentType(ContentType.Application.Json)
                 setBody(ChildRequest(name, birthDate, iconProfile, parentId))
             }
-            if(response.status.isSuccess()){
-                val response = response.body<ChildResponse>()
+            if (response.status.isSuccess()) {
+                val childRes = response.body<ChildResponse>()
                 Result.success(
                     Child(
-                        id = response.id,
-                        name = response.name,
-                        birthDate = response.birthDate,
-                        iconProfile = response.iconProfile,
-                        parentId = response.parentId
+                        id = childRes.id,
+                        name = childRes.name,
+                        birthDate = childRes.birthDate,
+                        iconProfile = childRes.iconProfile,
+                        parentId = childRes.parentId
                     )
-                    )
-            } else {
-                Result.failure(
-                    Exception("Login failed. Please try again.")
                 )
+            } else {
+                val errorBody = response.body<String>()
+                val errorMessage = if (errorBody.contains("\"detail\"")) {
+                    errorBody.substringAfter("\"detail\"").substringAfter("\"").substringBefore("\"")
+                } else {
+                    "Failed to add child profile."
+                }
+                Result.failure(Exception(errorMessage))
             }
 
         } catch(e: Exception){
@@ -205,17 +217,28 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val response = client.put("$BASE_URL/update_child/$id") {
                 contentType(ContentType.Application.Json)
-                setBody(ChildUpdate(name, birthDate,iconProfile))
-            }.body<ChildResponse>()
-            Result.success(
-                Child(
-                    id = response.id,
-                    name = response.name,
-                    birthDate = response.birthDate,
-                    iconProfile = response.iconProfile,
-                    parentId = response.parentId
+                setBody(ChildUpdate(name, birthDate, iconProfile))
+            }
+            if (response.status.isSuccess()) {
+                val childRes = response.body<ChildResponse>()
+                Result.success(
+                    Child(
+                        id = childRes.id,
+                        name = childRes.name,
+                        birthDate = childRes.birthDate,
+                        iconProfile = childRes.iconProfile,
+                        parentId = childRes.parentId
+                    )
                 )
-            )
+            } else {
+                val errorBody = response.body<String>()
+                val errorMessage = if (errorBody.contains("\"detail\"")) {
+                    errorBody.substringAfter("\"detail\"").substringAfter("\"").substringBefore("\"")
+                } else {
+                    "Failed to update child profile."
+                }
+                Result.failure(Exception(errorMessage))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -343,6 +366,8 @@ class AuthRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+
 
 }
 

@@ -23,7 +23,6 @@ object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     override fun deserialize(decoder: Decoder): LocalDateTime {
         val dateString = decoder.decodeString()
         return try {
-            // Try parsing as ISO_DATE_TIME (handles both with and without offset)
             val formatter = DateTimeFormatter.ISO_DATE_TIME
             val temporalAccessor = formatter.parseBest(dateString, OffsetDateTime::from, LocalDateTime::from)
             if (temporalAccessor is OffsetDateTime) {
@@ -32,7 +31,6 @@ object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
                 temporalAccessor as LocalDateTime
             }
         } catch (e: Exception) {
-            // Fallback for any other format
             LocalDateTime.parse(dateString)
         }
     }

@@ -19,7 +19,7 @@ import androidx.navigation.navArgument
 import com.example.kidapp.presentation.screens.signup.SignUpScreen
 import com.example.kidapp.ui.theme.KidAppTheme
 import com.example.kidapp.util.Routes
-import com.example.myapplication.kid_activity.presentation.screens.AddProfileScreen
+import com.example.kidapp.presentation.screens.addprofile.AddProfileScreen
 import com.example.kidapp.presentation.screens.kidactivity.KidActivityScreen
 import com.example.kidapp.presentation.screens.kidscreen.KidHomeScreen
 import com.example.myapplication.kid_activity.presentation.screens.KidSplashScreen

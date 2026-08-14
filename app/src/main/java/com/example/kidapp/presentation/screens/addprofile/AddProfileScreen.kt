@@ -1,4 +1,4 @@
-package com.example.myapplication.kid_activity.presentation.screens
+package com.example.kidapp.presentation.screens.addprofile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,8 +35,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.kidapp.R
-import com.example.kidapp.presentation.screens.addprofile.ChildProfileUIState
-import com.example.kidapp.presentation.screens.addprofile.ChildProfileViewModel
 import com.example.kidapp.presentation.screens.components.KidButton
 import com.example.kidapp.presentation.screens.components.KidTextField
 import com.example.kidapp.presentation.screens.components.ProfileImage

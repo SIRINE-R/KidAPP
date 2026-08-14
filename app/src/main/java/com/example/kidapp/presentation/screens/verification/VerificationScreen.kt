@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,6 +55,13 @@ fun VerificationScreen(
         ProfileImage(
             profileImage = R.drawable.mother,
         )
+        if (uiState is VerifyUIState.Error) {
+            Text(
+                text = (uiState as VerifyUIState.Error).message,
+                color = androidx.compose.ui.graphics.Color.Red,
+                style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+            )
+        }
         KidTextField(
             value = verifyViewModel.verifyPassword.value,
             onValueChange = { verifyViewModel.onVerifyPasswordChange(it) },
@@ -73,7 +81,9 @@ fun VerificationScreen(
         )
         KidButton(
             onClick = {
-                verifyViewModel.onVerifyClick(email)
+                    verifyViewModel.onVerifyClick(email)
+
+
             },
             text = stringResource(R.string.verify)
         )
