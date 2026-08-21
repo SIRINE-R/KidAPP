@@ -40,4 +40,12 @@
     <string name="something_went_wrong_please_check_your_inputs">حدث خطأ ما. يرجى التحقق من المدخلات الخاصة بك.</string>
     <string name="cannot_connect_to_server_check_your_network">لا يمكن الاتصال بالخادم. تحقق من الشبكة الخاصة بك.</string>
     <string name="an_unexpected_error_occurred">حدث خطأ غير متوقع</string>
+    <string name="no_history_found">لم يتم العثور على سجل</string>
+    <string name="choose_kid_s_name">اختر اسم الطفل</string>
+    <string name="who_is_watching">من يشاهد؟</string>
+    <string name="parent">والد</string>
+    <string name="no_results_found">لم يتم العثور على نتائج</string>
+    <string name="click_to_choose_kid_s_name">انقر لاختيار اسم الطفل</string>
+    <string name="back">رجوع</string>
+    <string name="related_videos">مقاطع فيديو ذات صلة</string>
 </resources>

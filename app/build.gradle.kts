@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.lifecycle.runtime.compose)
     //ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -72,6 +73,10 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.youtube.player)
 
+    //Adaptive Layout
+    implementation(libs.material3Adaptive)
+    implementation(libs.material3AdaptiveLayout)
+    implementation(libs.material3AdaptiveNavigationSuite)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

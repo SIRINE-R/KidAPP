@@ -1,45 +1,43 @@
 package com.example.kidapp.presentation.screens.kidactivity
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.kidapp.R
+import com.example.kidapp.domain.model.SearchTexts
+import com.example.kidapp.domain.model.Video
 import com.example.kidapp.presentation.screens.components.ActivityContainer
+import com.example.kidapp.presentation.screens.components.AppNavigationSuite
 import com.example.kidapp.presentation.screens.components.KidWatchedVideoCard
 import com.example.kidapp.presentation.screens.components.SearchContent
 import com.example.kidapp.util.Routes
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,156 +59,180 @@ fun KidActivityScreen(
     val videos by viewModel.video.collectAsState()
     val searchTexts by viewModel.searchedTexts.collectAsState()
 
-    val scrollState1 = rememberScrollState()
-    val scrollState2 = rememberScrollState()
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isCompact = windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
-
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate(Routes.ADDING.name + "/$email/$id") },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.AddCircle,
-                            contentDescription = null
-                        )
-                    }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate(Routes.SETTINGS.name + "/$email/$id") },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = null
-                        )
-                    }
-                )
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {  },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Face,
-                            contentDescription = null
-                        )
-                    }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate(Routes.PROFILES.name + "/$email/$id") },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = null
-                        )
-                    }
-                )
-            }
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = innerPadding
-        ) {
-            item {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+    AppNavigationSuite(
+        isHomeSelected = false,
+        isSettingsSelected = false,
+        isActivitySelected = true,
+        isAddSelected = false,
+        onHomeClick = { navController.navigate(Routes.PROFILES.name + "/$email/$id") },
+        onSettingsClick = { navController.navigate(Routes.SETTINGS.name + "/$email/$id") },
+        onActivityClick = { },
+        onAddClick = { navController.navigate(Routes.ADDING.name + "/$email/$id") },
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                ExposedDropdownMenuBox(
+                    expanded = isExpanded,
+                    onExpandedChange = { viewModel.onExpandClick() },
+                    modifier = Modifier.widthIn(max = 400.dp)
                 ) {
-                    ExposedDropdownMenuBox(
+                    TextField(
+                        modifier = Modifier
+                            .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
+                            .fillMaxWidth(),
+                        readOnly = true,
+                        value = selectedName,
+                        onValueChange = {},
+                        label = { Text(text = stringResource(R.string.choose_kid_s_name)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) }
+                    )
+                    ExposedDropdownMenu(
                         expanded = isExpanded,
-                        onExpandedChange = { viewModel.onExpandClick() },
-                        modifier = Modifier.clip(RoundedCornerShape(30.dp))
+                        onDismissRequest = { viewModel.onExpandClick() }
                     ) {
-                        TextField(
-                            modifier = Modifier.menuAnchor(),
-                            readOnly = true,
-                            value = selectedName,
-                            onValueChange = {},
-                            label = { Text(text = "Click to choose kid's name") }
-                        )
-                        ExposedDropdownMenu(
-                            expanded = isExpanded,
-                            onDismissRequest = { viewModel.onExpandClick() }
-                        ) {
-                            children.forEach {
-                                DropdownMenuItem(
-                                    text = { Text(it.name) },
-                                    onClick = {
-                                        viewModel.onSelectedNameChange(it.name)
-                                        viewModel.onSelectedChildIdChange(it.id)
-                                        viewModel.onExpandClick()
-                                        viewModel.getWatchedVideosAndSearchTexts(it.id, it.name)
-                                    }
+                        children.forEach { child ->
+                            DropdownMenuItem(
+                                text = { Text(child.name) },
+                                onClick = {
+                                    viewModel.onSelectedNameChange(child.name)
+                                    viewModel.onSelectedChildIdChange(child.id)
+                                    viewModel.onExpandClick()
+                                    viewModel.getWatchedVideosAndSearchTexts(child.id, child.name)
+                                }
+                            )
+                        }
+                    }
+                }
+
+                if (isCompact) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        ActivityContainer(
+                            title = stringResource(R.string.watch_history),
+                            content = {
+                                WatchHistoryList(
+                                    videos = videos,
+                                    selectedChildId = selectedChildId,
+                                    navController = navController
                                 )
                             }
+                        )
+                        ActivityContainer(
+                            title = stringResource(R.string.search_history),
+                            content = {
+                                SearchHistoryList(searchTexts = searchTexts)
+                            }
+                        )
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            ActivityContainer(
+                                title = stringResource(R.string.watch_history),
+                                content = {
+                                    WatchHistoryList(
+                                        videos = videos,
+                                        selectedChildId = selectedChildId,
+                                        navController = navController
+                                    )
+                                }
+                            )
+                        }
+                        Box(modifier = Modifier.weight(1f)) {
+                            ActivityContainer(
+                                title = stringResource(R.string.search_history),
+                                content = {
+                                    SearchHistoryList(searchTexts = searchTexts)
+                                }
+                            )
                         }
                     }
                 }
             }
+        }
+    )
+}
 
-            item {
-                ActivityContainer(
-                    title = stringResource(R.string.watch_history),
-                    content = {
-                        if (videos.isEmpty()) {
-                            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                                Text(text = "No history found", color = MaterialTheme.colorScheme.primary)
-                            }
-                        } else {
-                            Column(
-                                modifier = Modifier.verticalScroll(state = scrollState1)
-                            ) {
-                                videos.forEach {
-                                    KidWatchedVideoCard(
-                                        title = it.title,
-                                        description = it.description,
-                                        thumbnail = it.thumbnail_url,
-                                        onClick = {
-                                            navController.navigate(
-                                                Routes.PLAYERSCREEN.name + "/${it.video_id}/watched/${selectedChildId}"
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                )
-            }
-            item {
-                ActivityContainer(
-                    title = stringResource(R.string.search_history),
-                    content = {
-                        if (searchTexts.isEmpty()) {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "No history found",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                            else {
-                                Column(
-                                    modifier = Modifier.verticalScroll(state = scrollState2)
-                                ) {
-                                    searchTexts.forEach { search ->
-                                        SearchContent(
-                                            text = search.query,
-                                            timeDate = search.searchedAt.toString()
-                                        )
-                                    }
-                                }
-                            }
+@Composable
+private fun WatchHistoryList(
+    videos: List<Video>,
+    selectedChildId: Int?,
+    navController: NavHostController
+) {
+    val scrollState1 = rememberScrollState()
+    if (videos.isEmpty()) {
+        EmptyHistoryMessage()
+    } else {
+        Column(
+            modifier = Modifier.fillMaxWidth().verticalScroll(scrollState1),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            videos.forEach { video ->
+                KidWatchedVideoCard(
+                    title = video.title,
+                    description = video.description,
+                    thumbnail = video.thumbnail_url,
+                    onClick = {
+                        navController.navigate(
+                            Routes.PLAYERSCREEN.name + "/${video.video_id}/watched/${selectedChildId}"
+                        )
                     }
                 )
             }
         }
     }
 }
+
+@Composable
+private fun SearchHistoryList(searchTexts: List<SearchTexts>) {
+      val scrollState2 = rememberScrollState()
+    if (searchTexts.isEmpty()) {
+        EmptyHistoryMessage()
+    } else {
+        Column(
+            modifier = Modifier.fillMaxWidth().verticalScroll(scrollState2),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            searchTexts.forEach { search ->
+                SearchContent(
+                    text = search.query,
+                    timeDate = search.searchedAt.toString()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyHistoryMessage() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.no_history_found),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+

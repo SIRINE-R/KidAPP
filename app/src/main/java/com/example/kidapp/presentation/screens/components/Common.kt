@@ -13,11 +13,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -25,18 +32,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowWidthSizeClass
 import coil.compose.AsyncImage
 import com.example.kidapp.R
 
@@ -44,39 +54,58 @@ import com.example.kidapp.R
 @Composable
 fun ProfileImage(
     profileImage: Any?,
-    name: String? = "",
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    name: String? = null,
+    modifier: Modifier = Modifier,
+    imageSize: Dp = if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) 80.dp else 120.dp,
     onClick: () -> Unit = {}
 ) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = modifier
-                .size(80.dp)
+            modifier = Modifier
+                .size(imageSize)
                 .clip(CircleShape)
-                .background(Color.Transparent)
-                .clickable(
-                    onClick = onClick
-                )
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
         ) {
-           Image(
-               painter = painterResource(profileImage as Int),
-               contentDescription = null,
-               modifier = modifier.size(80.dp) ,
-               contentScale = ContentScale.Crop
-           )
+            if (profileImage is Int) {
+                Image(
+                    painter = painterResource(id = profileImage),
+                    contentDescription = name ?: "Profile Picture",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = name ?: "Profile Picture",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(imageSize * 0.6f)
+                )
+            }
         }
-        if (name != null) {
+
+        if (!name.isNullOrBlank()) {
             Text(
                 text = name,
-                color = Color.Black ,
-                style = MaterialTheme.typography.titleMedium ,
-                modifier = Modifier.padding(top = 8.dp)
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                style = if (imageSize > 100.dp) {
+                    MaterialTheme.typography.titleLarge
+                } else {
+                    MaterialTheme.typography.titleMedium
+                },
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .requiredWidth(imageSize + 24.dp)
             )
         }
     }
 }
+
 @Composable
 fun KidTextField(
     value: String,
@@ -111,7 +140,7 @@ fun KidTextField(
             },
             modifier = modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(10.dp),
             keyboardOptions = keyboardOptions,
             shape = RoundedCornerShape(25.dp),
             leadingIcon = leadingIcon,
@@ -129,6 +158,8 @@ fun KidTextField(
         )
     }
 }
+
+
 @Composable
 fun KidButton(
     onClick: () -> Unit,
@@ -148,6 +179,8 @@ fun KidButton(
         )
     }
 }
+
+
 @Composable
 fun SectionEditing(
     title: String,
@@ -373,17 +406,17 @@ fun SearchBar(
     isReadOnly: Boolean = false,
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onSearch: () -> Unit = {}
+    onSearch: () -> Unit = {},
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .size(60.dp)
                 .clip(CircleShape)
         ) {
@@ -391,7 +424,7 @@ fun SearchBar(
                 Image(
                     painter = painterResource(it),
                     contentDescription = null,
-                    modifier = Modifier.size(60.dp) ,
+                    modifier = modifier.size(60.dp) ,
                     contentScale = ContentScale.Crop
                 )
             }
@@ -403,7 +436,7 @@ fun SearchBar(
             leadingIcon = {
                 Icon(
                     painter = painterResource(R.drawable.search_interface_symbol),
-                    modifier = Modifier.size(24.dp),
+                    modifier = modifier.size(24.dp),
                     contentDescription = null
                 )
             },
@@ -441,3 +474,50 @@ fun ActivityContainer(
         }
     }
 }
+
+@Composable
+fun AppNavigationSuite(
+    isHomeSelected: Boolean = false,
+    isSettingsSelected: Boolean = false,
+    isActivitySelected: Boolean = false,
+    isAddSelected: Boolean = false,
+    onHomeClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onActivityClick: () -> Unit,
+    onAddClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            item(
+                selected = isAddSelected,
+                onClick = onAddClick,
+                icon = { Icon(Icons.Default.AddCircle, contentDescription = "Add") },
+                label = { Text("Add") }
+            )
+            item(
+                selected = isSettingsSelected,
+                onClick = onSettingsClick,
+                icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                label = { Text("Settings") }
+            )
+
+            item(
+                selected = isActivitySelected,
+                onClick = onActivityClick,
+                icon = { Icon(Icons.Default.Face, contentDescription = "Activity") },
+                label = { Text("Activity") }
+            )
+
+            item(
+                selected = isHomeSelected,
+                onClick = onHomeClick,
+                icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                label = { Text("Home") }
+            )
+        }
+    ) {
+        content()
+    }
+}
+

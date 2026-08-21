@@ -19,8 +19,8 @@ class VerifyViewModel @Inject constructor(
     private val _verifyUiState = MutableStateFlow<VerifyUIState>(VerifyUIState.Idle)
     val verifyUiState: StateFlow<VerifyUIState> = _verifyUiState
 
-    private val _verifyPassword = mutableStateOf("")
-    val verifyPassword: State<String> = _verifyPassword
+    private val _verifyPassword = MutableStateFlow("")
+    val verifyPassword: StateFlow<String> = _verifyPassword
 
 
 

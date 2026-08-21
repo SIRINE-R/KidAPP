@@ -7,7 +7,7 @@ class DeleteChildUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(
-        id: Int,
+        id: Int?,
         name: String
     ) = authRepository.deleteChild(name = name,id = id)
 }

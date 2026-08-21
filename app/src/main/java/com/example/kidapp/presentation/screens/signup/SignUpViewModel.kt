@@ -23,23 +23,23 @@ class SignUpViewModel @Inject constructor(
     private val _registerUiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Idle)
     val registerUiState: StateFlow<SignUpUiState> = _registerUiState
 
-    private val _name = mutableStateOf("")
-    val name: State<String> = _name
+    private val _name = MutableStateFlow("")
+    val name: StateFlow<String> = _name
 
-    private val _email = mutableStateOf("")
-    val email: State<String> = _email
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email
 
-    private val _password = mutableStateOf("")
-    val password: State<String> = _password
+    private val _password = MutableStateFlow("")
+    val password: StateFlow<String> = _password
 
-    private val _nameError = mutableStateOf<String?>(null)
-    val nameError: State<String?> = _nameError
+    private val _nameError = MutableStateFlow<String?>(null)
+    val nameError: StateFlow<String?> = _nameError
 
-    private val _emailError = mutableStateOf<String?>(null)
-    val emailError: State<String?> = _emailError
+    private val _emailError = MutableStateFlow<String?>(null)
+    val emailError: StateFlow<String?> = _emailError
 
-    private val _passwordError = mutableStateOf<String?>(null)
-    val passwordError: State<String?> = _passwordError
+    private val _passwordError = MutableStateFlow<String?>(null)
+    val passwordError: StateFlow<String?> = _passwordError
     fun isInputValid(values: List<String>): Boolean {
         _nameError.value = null
         _emailError.value = null

@@ -23,12 +23,12 @@ import com.example.kidapp.presentation.screens.addprofile.AddProfileScreen
 import com.example.kidapp.presentation.screens.kidactivity.KidActivityScreen
 import com.example.kidapp.presentation.screens.kidscreen.KidHomeScreen
 import com.example.myapplication.kid_activity.presentation.screens.KidSplashScreen
-import com.example.myapplication.kid_activity.presentation.screens.LoginScreen
+import com.example.kidapp.presentation.screens.login.LoginScreen
 import com.example.kidapp.presentation.screens.profiles.ProfilesScreen
 import com.example.kidapp.presentation.screens.search.SearchScreen
 import com.example.kidapp.presentation.screens.settings.SettingsScreen
 import com.example.kidapp.presentation.screens.videoPlayer.VideoPlayerScreen
-import com.example.myapplication.kid_activity.presentation.screens.VerificationScreen
+import com.example.kidapp.presentation.screens.verification.VerificationScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -46,10 +46,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavHost(
-                        navController = navigation,
-                        startDestination = Routes.SPLASH.name
-                    ) {
+                        NavHost(
+                            navController = navigation,
+                            startDestination = Routes.SPLASH.name
+                        ) {
                         composable(Routes.SPLASH.name) {
                             KidSplashScreen(navigation)
                         }

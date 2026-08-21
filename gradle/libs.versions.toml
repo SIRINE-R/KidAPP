@@ -9,6 +9,7 @@ lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
 kotlin = "2.4.0"
 composeBom = "2026.06.00"
+material3Adaptive = "1.0.0"
 navigationRuntimeKtx = "2.9.8"
 navigationCompose = "2.9.8"
 lifecycleViewmodelKtx = "2.11.0"
@@ -20,8 +21,12 @@ ktor = "3.0.0"
 lifecycleRuntimeCompose = "2.11.0"
 coil = "2.7.0"
 youtube-player = "13.0.0"
+foundation = "1.12.0"
 
 [libraries]
+material3Adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "material3Adaptive" }
+material3AdaptiveLayout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "material3Adaptive" }
+material3AdaptiveNavigationSuite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "material3Adaptive" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -58,6 +63,7 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 youtube-player = { group = "com.pierfrancescosoffritti.androidyoutubeplayer", name = "core", version.ref = "youtube-player" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

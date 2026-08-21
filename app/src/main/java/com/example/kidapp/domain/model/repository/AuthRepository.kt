@@ -47,11 +47,11 @@ interface AuthRepository {
         name: String,
         birthDate: String,
         iconProfile: String,
-        id: Int
+        id: Int?
     ): Result<Child>
 
     suspend fun deleteChild(
-        id: Int,
+        id: Int?,
         name: String
     ): Result<HttpResponse>
 

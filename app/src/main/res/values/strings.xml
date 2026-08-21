@@ -38,4 +38,12 @@
     <string name="something_went_wrong_please_check_your_inputs">Something went wrong. Please check your inputs.</string>
     <string name="cannot_connect_to_server_check_your_network">Cannot connect to server. Check your network.</string>
     <string name="an_unexpected_error_occurred">An unexpected error occurred</string>
+    <string name="no_history_found">No history found</string>
+    <string name="choose_kid_s_name">Choose kid\'s name</string>
+    <string name="who_is_watching">Who is watching?</string>
+    <string name="parent">Parent</string>
+    <string name="no_results_found">No results found</string>
+    <string name="click_to_choose_kid_s_name">Click to choose kid\'s name</string>
+    <string name="back">Back</string>
+    <string name="related_videos">Related Videos</string>
 </resources>

@@ -18,9 +18,6 @@ class VideoPlayerViewModel @Inject constructor(
     private val addVideoUseCase: AddWatchedVideoUseCase
 ) : ViewModel() {
 
-
-
-
     private val _relatedVideos = MutableStateFlow<List<Video>>(emptyList())
     val relatedVideos = _relatedVideos.asStateFlow()
 

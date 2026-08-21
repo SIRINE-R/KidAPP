@@ -212,7 +212,7 @@ class AuthRepositoryImpl @Inject constructor(
         name: String,
         birthDate: String,
         iconProfile: String,
-        id: Int
+        id: Int?
     ): Result<Child> {
         return try {
             val response = client.put("$BASE_URL/update_child/$id") {
@@ -244,7 +244,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteChild(id: Int, name: String): Result<HttpResponse> {
+    override suspend fun deleteChild(id: Int?, name: String): Result<HttpResponse> {
         return try {
             val response = client.delete("$BASE_URL/delete_child/$id") {
                 url {

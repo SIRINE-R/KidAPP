@@ -25,10 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -51,11 +49,20 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
+import com.example.kidapp.R
 import java.time.LocalDateTime
-
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,9 +74,12 @@ fun VideoPlayerScreen(
     viewModel: VideoPlayerViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val relatedVideos by viewModel.relatedVideos.collectAsState()
+    val relatedVideos by viewModel.relatedVideos.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val isFullScreen by viewModel.isFullScreen.collectAsState()
+    val isFullScreen by viewModel.isFullScreen.collectAsStateWithLifecycle()
+
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isCompact = windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
     var activeFullscreenView: View? by remember { mutableStateOf(null) }
 
@@ -94,7 +104,6 @@ fun VideoPlayerScreen(
             addFullscreenListener(object : FullscreenListener {
                 override fun onEnterFullscreen(fullscreenView: View, exitFullscreen: () -> Unit) {
                     viewModel.toggleFullScreen(true)
-
                     activeFullscreenView = fullscreenView
 
                     val activity = context as? Activity
@@ -170,62 +179,128 @@ fun VideoPlayerScreen(
                     title = { Text("") },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.back)
+                            )
                         }
                     },
-                    colors = TopAppBarColors(
+                    colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                        scrolledContainerColor = MaterialTheme.colorScheme.primary,
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 )
             }
         }
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(if (isFullScreen) PaddingValues(0.dp) else innerPadding)
         ) {
-            AndroidView(
-                modifier = if (isFullScreen) Modifier.fillMaxSize() else Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16 / 9f),
-                factory = { youtubePlayerView }
-            )
-
-            if (!isFullScreen) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Related Videos",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+            if (isFullScreen) {
+                AndroidView(
+                    modifier = Modifier.fillMaxSize(),
+                    factory = { youtubePlayerView }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+            } else if (isCompact) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    AndroidView(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16 / 9f),
+                        factory = { youtubePlayerView }
+                    )
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = stringResource(R.string.related_videos),
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = 180.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = relatedVideos,
+                            key = { video -> video.video_id }
+                        ) { video ->
+                            VideoCard(
+                                title = video.title,
+                                description = video.description,
+                                thumbnail = video.thumbnail_url,
+                                onClick = {
+                                    navController.navigate(
+                                        Routes.PLAYERSCREEN.name + "/${video.video_id}/${query}/${childId}"
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(relatedVideos) { video ->
-                        VideoCard(
-                            title = video.title,
-                            description = video.description,
-                            thumbnail = video.thumbnail_url,
-                            onClick = {
-                                navController.navigate(Routes.PLAYERSCREEN.name + "/${video.video_id}/${query}/${childId}")
-                            }
+                    Box(
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .clip(RoundedCornerShape(16.dp))
+                    ) {
+                        AndroidView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(16 / 9f),
+                            factory = { youtubePlayerView }
                         )
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.related_videos),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(minSize = 160.dp),
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(
+                                items = relatedVideos,
+                                key = { video -> video.video_id }
+                            ) { video ->
+                                VideoCard(
+                                    title = video.title,
+                                    description = video.description,
+                                    thumbnail = video.thumbnail_url,
+                                    onClick = {
+                                        navController.navigate(
+                                            Routes.PLAYERSCREEN.name + "/${video.video_id}/${query}/${childId}"
+                                        )
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-

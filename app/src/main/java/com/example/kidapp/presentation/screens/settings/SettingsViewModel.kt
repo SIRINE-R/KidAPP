@@ -1,11 +1,9 @@
 package com.example.kidapp.presentation.screens.settings
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kidapp.R
-import com.example.kidapp.data.remote.dto.ChildProfileResponse
+import com.example.kidapp.domain.model.Child
 import com.example.kidapp.domain.model.use_case.ChildrenUseCase
 import com.example.kidapp.domain.model.use_case.DeleteChildUseCase
 import com.example.kidapp.domain.model.use_case.DeleteParentUseCase
@@ -42,7 +40,7 @@ class SettingsViewModel @Inject constructor(
         val selectedIcon: Int = 0,
         val isChoosingIcon: Boolean = false,
         val isExpanded: Boolean = false,
-        val childIdUpdate: Int = 0
+        val childIdUpdate: Int? = 0
     )
 
     private val drawableToKeyMap = mapOf(
@@ -67,8 +65,8 @@ class SettingsViewModel @Inject constructor(
     private val _formState = MutableStateFlow(SettingsFormState())
     val formState: StateFlow<SettingsFormState> = _formState.asStateFlow()
 
-    private val _child = MutableStateFlow<List<ChildProfileResponse>>(emptyList())
-    val child: MutableStateFlow<List<ChildProfileResponse>> = _child
+    private val _child = MutableStateFlow<List<Child>>(emptyList())
+    val child: MutableStateFlow<List<Child>> = _child
 
     fun onEmailUpdate(email: String?) {
         if (email != null) {
@@ -100,7 +98,7 @@ class SettingsViewModel @Inject constructor(
         _formState.value = _formState.value.copy(deleteEmail = deleteEmail)
     }
 
-    fun onChildIdChange(id: Int) {
+    fun onChildIdChange(id: Int?) {
         _formState.value = _formState.value.copy(childIdUpdate = id)
     }
 
@@ -152,7 +150,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteChildClick(id: Int) {
+    fun onDeleteChildClick(id: Int?) {
         viewModelScope.launch {
             _settingsUIState.value = SettingsUIState.Loading
             val result = deleteChildUseCase(
@@ -206,8 +204,17 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             _settingsUIState.value = SettingsUIState.Loading
             val result = getChildrenUseCase(id)
-            result.onSuccess {
-                _child.value = it
+            result.onSuccess { result ->
+                _child.value = result.map {
+                    Child(
+                        id = it.id,
+                        name = it.name,
+                        birthDate = it.birthDate,
+                        iconProfile = it.iconProfile,
+                        parentId = id
+                    )
+                }
+
             }
         }
     }
